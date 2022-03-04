@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Question : Codable, Identifiable {
+struct Question : Codable, Identifiable, Equatable {
     var id : Int
     var question : String
     var options : [String]
