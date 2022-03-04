@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "question" : "¿Quién tiene el anillo al comienzo de la trilogía?",
+    "options" : ["Bilbo", "Frodo", "Sauron"],
+    "correctAnswer" : "Bilbo"
+  },
+  {
+    "id": 2,
+    "question" : "¿A quién conocen los hobbits en el pony pisador?",
+    "options" : ["Gandalf", "Baya de oro", "Trancos"],
+    "correctAnswer" : "Trancos"
+  },
+  {
+    "id": 3,
+    "question" : "¿Quién es padre de Arwen?",
+    "options" : ["Finarfin", "Elrond", "Celeborn"],
+    "correctAnswer" : "Elrond"
+  },
+  {
+    "id": 4,
+    "question" : "¿Cuántos miembros tiene la compañía del anillo?",
+    "options" : ["Cinco", "Ocho", "Nueve"],
+    "correctAnswer" : "Nueve"
+  },
+  {
+    "id": 5,
+    "question" : "¿Quien de los siguientes no es un Istari?",
+    "options" : ["Mithrandir", "Radagast", "Celeborn"],
+    "correctAnswer" : "Celeborn"
+  },
+  {
+    "id": 6,
+    "question" : "¿Cuántos anillos fueron para los reyes elfos bajo el cielo?",
+    "options" : ["Cinco", "Tres", "Cuatro"],
+    "correctAnswer" : "Tres"
+  },
+  {
+    "id": 7,
+    "question" : "¿Cuántos anillos fueron para los señores enanos en palacios de piedra?",
+    "options" : ["Siete", "Seis", "Tres"],
+    "correctAnswer" : "Siete"
+  },
+  {
+    "id": 8,
+    "question" : "¿Cuántos anillos fueron para los hombres mortales condenados a morir?",
+    "options" : ["Dos", "Nueve", "Siete"],
+    "correctAnswer" : "Nueve"
+  },
+  {
+    "id": 9,
+    "question" : "¿Cuál era el nombre hobbit de Gollum?",
+    "options" : ["Smeagol", "Meriadoc", "Deagol"],
+    "correctAnswer" : "Smeagol"
+  },
+  {
+    "id": 10,
+    "question" : "¿Qué mujer acaba con el Rey Brujo de Angmar?",
+    "options" : ["Eowyn", "Arwen", "Galadriel"],
+    "correctAnswer" : "Eowyn"
+  }
+]

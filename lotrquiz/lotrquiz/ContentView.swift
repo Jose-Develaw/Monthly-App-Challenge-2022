@@ -8,9 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    var questions : [Question] = Bundle.main.decode("questions.json")
+    
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        NavigationView{
+            List{
+                ForEach(questions){ question in
+                    Text(question.question)
+                }
+            }
+        }
     }
 }
 
