@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C44F3D2827D4EFD40047EB93 /* anirb___.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C44F3D2727D4EFD40047EB93 /* anirb___.ttf */; };
 		C46165A327D27C8A00D21782 /* lotrquizApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46165A227D27C8A00D21782 /* lotrquizApp.swift */; };
 		C46165A527D27C8A00D21782 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46165A427D27C8A00D21782 /* ContentView.swift */; };
 		C46165A727D27C8B00D21782 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C46165A627D27C8B00D21782 /* Assets.xcassets */; };
@@ -17,6 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C44F3D2627D4ED8F0047EB93 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C44F3D2727D4EFD40047EB93 /* anirb___.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "anirb___.ttf"; sourceTree = "<group>"; };
 		C461659F27D27C8A00D21782 /* lotrquiz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = lotrquiz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C46165A227D27C8A00D21782 /* lotrquizApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = lotrquizApp.swift; sourceTree = "<group>"; };
 		C46165A427D27C8A00D21782 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -57,10 +60,12 @@
 		C46165A127D27C8A00D21782 /* lotrquiz */ = {
 			isa = PBXGroup;
 			children = (
+				C44F3D2627D4ED8F0047EB93 /* Info.plist */,
 				C46165A227D27C8A00D21782 /* lotrquizApp.swift */,
 				C46165A427D27C8A00D21782 /* ContentView.swift */,
 				C46165B027D2850000D21782 /* questions.json */,
 				C46165A627D27C8B00D21782 /* Assets.xcassets */,
+				C44F3D2727D4EFD40047EB93 /* anirb___.ttf */,
 				C46165A827D27C8B00D21782 /* Preview Content */,
 				C46165B227D2855900D21782 /* Bundle-Decode.swift */,
 				C46165B427D285B100D21782 /* Question.swift */,
@@ -135,6 +140,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C46165B127D2850000D21782 /* questions.json in Resources */,
+				C44F3D2827D4EFD40047EB93 /* anirb___.ttf in Resources */,
 				C46165AA27D27C8B00D21782 /* Preview Assets.xcassets in Resources */,
 				C46165A727D27C8B00D21782 /* Assets.xcassets in Resources */,
 			);
@@ -284,6 +290,7 @@
 				DEVELOPMENT_TEAM = GZPNWT798Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = lotrquiz/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -313,6 +320,7 @@
 				DEVELOPMENT_TEAM = GZPNWT798Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = lotrquiz/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
