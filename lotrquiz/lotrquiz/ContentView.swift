@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct Arc : InsettableShape {
     var startAngle: Angle
@@ -49,9 +50,11 @@ struct ContentView: View {
     @State private var tickingAmount = 0.0
     @State private var remaining = 30
     
+    @State var timer: Timer.TimerPublisher = Timer.publish(every: 1, on: .main, in: .common)
+    @State var connectedTimer: Cancellable? = nil
     
     var body: some View {
-        NavigationView{
+        VStack{
             ZStack{
                 Image("background")
                     .resizable()
@@ -62,52 +65,78 @@ struct ContentView: View {
                     .ignoresSafeArea()
                 if (gameQuestions != []){
                     VStack{
+                        Text("THE LORD OF THE QUIZ")
+                            .font(.custom("Aniron", size: 28, relativeTo: .title))
+                            .multilineTextAlignment(.center)
+                            .padding()
+                        Spacer()
                         ZStack{
                             Text(remaining, format: .number)
-                                .font(.title)
-                                .frame(maxWidth: 165, maxHeight: 165)
+                                .font(.custom("Aniron", size: 32, relativeTo: .title))
+                                .frame(maxWidth: 150, maxHeight: 150)
                             if(tickingAmount > 10.0){
                                 Image("ringrule")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(maxWidth: 165, maxHeight: 165)
+                                    .frame(maxWidth: 150, maxHeight: 150)
                                     .colorMultiply(ringColor())
                                     .mask{
                                         Arc(startAngle: .degrees(0), tickingAmount: tickingAmount, clockwise: true)
                                             .strokeBorder(.red, style: StrokeStyle(lineWidth: 35, lineCap: .round, lineJoin: .round))
-                                            .frame(maxWidth: 165, maxHeight: 165)
+                                            .frame(maxWidth: 150, maxHeight: 150)
                                     }
                             }
                         }
-                        
-                        VStack(alignment: .center){
-                            Text(gameQuestions[currentRound].question)
-                                .font(.custom("anirb___", size: 36))
-                        }
-                        .padding()
-                        ForEach(options, id: \.self){option in
-                            Button{
-                                Task.init(priority: .high) {
-                                    await answerQuestion(option)
+                        Spacer()
+                        VStack{
+                            Spacer()
+                            VStack(alignment: .center){
+                                Text(gameQuestions[currentRound].question)
+                                    .font(.custom("Aniron", size: 18, relativeTo: .headline))
+                                    .multilineTextAlignment(.center)
+                            }
+                            .padding()
+                            ForEach(options, id: \.self){option in
+                                Button{
+                                    Task.init(priority: .high) {
+                                        cancelTimer()
+                                        await answerQuestion(option)
+                                    }
+                                } label: {
+                                    Text(option)
+                                        .frame(maxWidth: .infinity, maxHeight: 50)
+                                        .foregroundColor(.white)
+                                        .font(.custom("Aniron", size: 18, relativeTo: .headline))
+                                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .strokeBorder(resolveColor(option), lineWidth: 2)
+                                        )
+                                        .padding(.horizontal)
                                 }
-                            } label: {
-                                Text(option)
-                                    .frame(maxWidth: .infinity, maxHeight: 50)
-                                    .foregroundColor(.white)
-                                    .font(.title3)
-                                    .clipShape(RoundedRectangle(cornerRadius: 5))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 5)
-                                            .strokeBorder(resolveColor(option), lineWidth: 2)
-                                    )
-                                    .padding(.horizontal)
                             }
                         }
+                        .frame(maxHeight: .infinity)
+                        
                     }
-                    .navigationTitle("El señor de los anillos")
-                    .font(.custom("anirb___.ttf", size: 36))
                     .frame(maxWidth: 550)
+                    .padding(15)
                     .preferredColorScheme(.dark)
+                    .onReceive(timer){ _ in
+                        
+                        if (remaining > 0 && !answered) {
+                            withAnimation(.linear(duration: 1)){
+                                tickingAmount += 12
+                            }
+                            remaining -= 1
+                        } else {
+                            cancelTimer()
+                            Task.init(priority: .high) {
+                                await answerQuestion("")
+                            }
+                        }
+                        
+                    }
                 }
             }
             
@@ -116,22 +145,20 @@ struct ContentView: View {
         .onAppear{
             gameQuestions = allQuestions.shuffled()[..<10]
             options = gameQuestions[currentRound].options.shuffled()
-            
-            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-                withAnimation(.linear(duration: 1)){
-                    if (remaining > 0 && !answered) {
-                        tickingAmount += 12
-                        remaining -= 1
-                    } else {
-                        Task.init(priority: .high) {
-                            await answerQuestion("")
-                        }
-                    }
-                    
-                }
-            }
+            instantiateTimer()
         }
     }
+    
+    func instantiateTimer() {
+            self.timer = Timer.publish(every: 1, on: .main, in: .common)
+            self.connectedTimer = self.timer.connect()
+            return
+        }
+        
+        func cancelTimer() {
+            self.connectedTimer?.cancel()
+            return
+        }
     
     func answerQuestion(_ option: String) async {
         withAnimation{
@@ -145,6 +172,7 @@ struct ContentView: View {
         answered = false
         options = gameQuestions[currentRound].options
         tickingAmount = 0.0
+        instantiateTimer()
         
     }
     

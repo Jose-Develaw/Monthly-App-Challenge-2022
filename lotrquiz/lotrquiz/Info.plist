@@ -9,7 +9,8 @@
 	</array>
 	<key>UIAppFonts</key>
 	<array>
-		<string>anirb___.ttf</string>
+		<string>anirb.ttf</string>
+		<string>bearer.TTF</string>
 	</array>
 </dict>
 </plist>
