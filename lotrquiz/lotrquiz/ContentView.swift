@@ -8,36 +8,6 @@
 import SwiftUI
 import Combine
 
-struct Arc : InsettableShape {
-    var startAngle: Angle
-    var tickingAmount : Double
-    var clockwise : Bool
-    var insetAmount = 0.0
-    
-    var animatableData: Double {
-        get { tickingAmount }
-        set { tickingAmount = newValue }
-    }
-    
-    func path(in rect: CGRect) -> Path {
-        
-        var path = Path()
-        let rotationAdjustment = Angle(degrees: 90)
-        let modifiedStart = startAngle - rotationAdjustment
-        let modifiedEnd = .degrees(tickingAmount) - rotationAdjustment
-        path.addArc(center: CGPoint(x: rect.midX, y: rect.midY), radius: rect.midX, startAngle: modifiedStart, endAngle: modifiedEnd, clockwise: !clockwise)
-        
-        return path
-    }
-    
-    func inset(by amount: CGFloat) -> some InsettableShape {
-        var arc = self
-        arc.insetAmount += amount
-        return arc
-    }
-   
-}
-
 struct ContentView: View {
     var allQuestions : [Question] = Bundle.main.decode("questions.json")
     @State private var gameQuestions = ArraySlice<Question>()
@@ -70,23 +40,7 @@ struct ContentView: View {
                             .multilineTextAlignment(.center)
                             .padding()
                         Spacer()
-                        ZStack{
-                            Text(remaining, format: .number)
-                                .font(.custom("Aniron", size: 32, relativeTo: .title))
-                                .frame(maxWidth: 150, maxHeight: 150)
-                            if(tickingAmount > 10.0){
-                                Image("ringrule")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(maxWidth: 150, maxHeight: 150)
-                                    .colorMultiply(ringColor())
-                                    .mask{
-                                        Arc(startAngle: .degrees(0), tickingAmount: tickingAmount, clockwise: true)
-                                            .strokeBorder(.red, style: StrokeStyle(lineWidth: 35, lineCap: .round, lineJoin: .round))
-                                            .frame(maxWidth: 150, maxHeight: 150)
-                                    }
-                            }
-                        }
+                        RingTimer(tickingAmount: $tickingAmount, remaining: $remaining)
                         Spacer()
                         VStack{
                             Spacer()
@@ -103,20 +57,14 @@ struct ContentView: View {
                                         await answerQuestion(option)
                                     }
                                 } label: {
-                                    Text(option)
-                                        .frame(maxWidth: .infinity, maxHeight: 50)
-                                        .foregroundColor(.white)
-                                        .font(.custom("Aniron", size: 18, relativeTo: .headline))
-                                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .strokeBorder(resolveColor(option), lineWidth: 2)
-                                        )
-                                        .padding(.horizontal)
+                                    AnswerButton(resolvedColor: resolveColor(option), option: option)
                                 }
                             }
                         }
                         .frame(maxHeight: .infinity)
+                        Text("Puntuación: \(score)")
+                            .font(.custom("Aniron", size: 18, relativeTo: .headline))
+                            .padding()
                         
                     }
                     .frame(maxWidth: 550)
@@ -153,17 +101,20 @@ struct ContentView: View {
             self.timer = Timer.publish(every: 1, on: .main, in: .common)
             self.connectedTimer = self.timer.connect()
             return
-        }
+    }
         
-        func cancelTimer() {
-            self.connectedTimer?.cancel()
-            return
-        }
+    func cancelTimer() {
+        self.connectedTimer?.cancel()
+        return
+    }
     
     func answerQuestion(_ option: String) async {
         withAnimation{
             selectedOption = option
             answered = true
+            if(option == gameQuestions[currentRound].correctAnswer){
+                score += remaining
+            }
         }
         try? await Task.sleep(nanoseconds: 2_000_000_000)
         remaining = 30
@@ -176,14 +127,7 @@ struct ContentView: View {
         
     }
     
-    func ringColor() -> Color {
-        if(remaining > 20) {
-            return .white
-        } else if (remaining > 10) {
-            return .orange
-        }
-        return .red
-    }
+    
     
     func resolveColor(_ option: String) -> Color {
         if(!answered){
