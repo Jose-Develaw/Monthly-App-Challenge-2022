@@ -70,7 +70,6 @@ struct ContentView: View {
                             .padding()
                         
                     }
-                    .frame(maxWidth: 550)
                     .padding(15)
                     .preferredColorScheme(.dark)
                     .onReceive(timer){ _ in
@@ -89,16 +88,16 @@ struct ContentView: View {
                         }
                         
                     }
+                    .frame(maxWidth: 550, maxHeight: 800)
                 }
             }
-            
-           
         }
         .onAppear{
             gameQuestions = allQuestions.shuffled()[..<10]
             options = gameQuestions[currentRound].options.shuffled()
             instantiateTimer()
         }
+        
     }
     
     func instantiateTimer() {
