@@ -20,6 +20,8 @@ struct ContentView: View {
         
     @State private var tickingAmount = 0.0
     @State private var remaining = 30
+    @State private var showEye = false
+    @State private var showCorrect = false
     
     @State var timer: Timer.TimerPublisher = Timer.publish(every: 1, on: .main, in: .common)
     @State var connectedTimer: Cancellable? = nil
@@ -37,17 +39,17 @@ struct ContentView: View {
                 if (gameQuestions != []){
                     VStack{
                         Text("THE LORD OF THE QUIZ")
-                            .font(.custom("Aniron", size: 28, relativeTo: .title))
+                            .font(.custom("Aniron", size: 26, relativeTo: .title))
                             .multilineTextAlignment(.center)
                             .padding()
                         Spacer()
-                        RingTimer(tickingAmount: $tickingAmount, remaining: $remaining)
+                        RingTimer(tickingAmount: $tickingAmount, remaining: $remaining, showEye: $showEye, showCorrect: $showCorrect)
                         Spacer()
                         VStack{
                             Spacer()
                             VStack(alignment: .center){
                                 Text(gameQuestions[currentRound].question)
-                                    .font(.custom("Aniron", size: 18, relativeTo: .headline))
+                                    .font(.custom("Aniron", size: 16, relativeTo: .headline))
                                     .multilineTextAlignment(.center)
                             }
                             .padding()
@@ -81,6 +83,9 @@ struct ContentView: View {
                             remaining -= 1
                         } else {
                             cancelTimer()
+                            withAnimation{
+                                showEye = true
+                            }
                             areButtonsDisabled = true
                             Task.init(priority: .high) {
                                 await answerQuestion("")
@@ -120,6 +125,11 @@ struct ContentView: View {
         tickingAmount = 0.0
         instantiateTimer()
         areButtonsDisabled = false
+        showCorrect = false
+        withAnimation{
+            showEye = false
+           
+        }
     }
     
     func resetGame(){
@@ -133,10 +143,16 @@ struct ContentView: View {
         withAnimation{
             selectedOption = option
             answered = true
-            if(option == gameQuestions[currentRound].correctAnswer){
+        }
+        if(option == gameQuestions[currentRound].correctAnswer){
+                showCorrect = true
                 score += remaining
+        } else {
+            withAnimation{
+                showEye = true
             }
         }
+        
         try? await Task.sleep(nanoseconds: 2_000_000_000)
         if(currentRound < 9){
             nextRound()
