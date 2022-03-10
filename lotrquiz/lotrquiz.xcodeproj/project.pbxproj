@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C440DAF427DAA88F00AD9AA7 /* UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C440DAF327DAA88F00AD9AA7 /* UIExtensions.swift */; };
 		C46165A327D27C8A00D21782 /* lotrquizApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46165A227D27C8A00D21782 /* lotrquizApp.swift */; };
 		C46165A527D27C8A00D21782 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46165A427D27C8A00D21782 /* ContentView.swift */; };
 		C46165A727D27C8B00D21782 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C46165A627D27C8B00D21782 /* Assets.xcassets */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C440DAF327DAA88F00AD9AA7 /* UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIExtensions.swift; sourceTree = "<group>"; };
 		C44F3D2627D4ED8F0047EB93 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C44F3D2727D4EFD40047EB93 /* anirb.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = anirb.ttf; sourceTree = "<group>"; };
 		C461659F27D27C8A00D21782 /* lotrquiz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = lotrquiz.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -81,6 +83,7 @@
 				C480B62827D97168007F4EAE /* RingTimer.swift */,
 				C480B62A27D97265007F4EAE /* Arc.swift */,
 				C480B62C27D97345007F4EAE /* AnswerButton.swift */,
+				C440DAF327DAA88F00AD9AA7 /* UIExtensions.swift */,
 			);
 			path = lotrquiz;
 			sourceTree = "<group>";
@@ -169,6 +172,7 @@
 				C46165A527D27C8A00D21782 /* ContentView.swift in Sources */,
 				C46165B527D285B100D21782 /* Question.swift in Sources */,
 				C480B62B27D97265007F4EAE /* Arc.swift in Sources */,
+				C440DAF427DAA88F00AD9AA7 /* UIExtensions.swift in Sources */,
 				C480B62927D97168007F4EAE /* RingTimer.swift in Sources */,
 				C480B62D27D97345007F4EAE /* AnswerButton.swift in Sources */,
 				C46165A327D27C8A00D21782 /* lotrquizApp.swift in Sources */,

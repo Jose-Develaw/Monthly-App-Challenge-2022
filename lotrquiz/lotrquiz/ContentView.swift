@@ -8,8 +8,14 @@
 import SwiftUI
 import Combine
 
+enum GameState {
+    case mainMenu, playing, finalScore, topScores
+}
+
 struct ContentView: View {
     var allQuestions : [Question] = Bundle.main.decode("questions.json")
+    
+    @State private var gameState : GameState = .mainMenu
     @State private var gameQuestions = ArraySlice<Question>()
     @State private var currentRound = 0
     @State private var score = 0
@@ -17,12 +23,14 @@ struct ContentView: View {
     @State private var selectedOption = ""
     @State private var options = [String]()
     @State private var areButtonsDisabled = false
-        
+    
+    //Timer and Score Graphics
     @State private var tickingAmount = 0.0
     @State private var remaining = 30
     @State private var showEye = false
     @State private var showCorrect = false
     
+    //Timer
     @State var timer: Timer.TimerPublisher = Timer.publish(every: 1, on: .main, in: .common)
     @State var connectedTimer: Cancellable? = nil
     
@@ -36,72 +44,130 @@ struct ContentView: View {
                 Color(.black)
                     .opacity(0.75)
                     .ignoresSafeArea()
-                if (gameQuestions != []){
-                    VStack{
-                        Text("THE LORD OF THE QUIZ")
-                            .font(.custom("Aniron", size: 26, relativeTo: .title))
-                            .multilineTextAlignment(.center)
+                VStack{
+                    Text("THE LORD OF THE QUIZ")
+                        .font(.custom("Aniron", size: 26, relativeTo: .title))
+                        .multilineTextAlignment(.center)
+                        .padding()
+                    Spacer()
+                    if (gameState == .mainMenu){
+                        VStack{
+                            Button{
+                               initGame()
+                            } label: {
+                                Text("Iniciar partida")
+                                    .buttonLabel()
+                            }
+                            Button{
+                                gameState = .topScores
+                            } label: {
+                                Text("Ver puntuaciones")
+                                    .buttonLabel()
+                            }
+                        }
+                        Spacer()
+                        Text("© José Ibáñez (Develaw) 2022")
+                            .foregroundColor(.white)
+                            .font(.footnote)
+                    }
+                    if (gameState == .topScores){
+                        VStack{
+                            ScrollView{
+                                LazyVStack{
+                                    ForEach(0..<10){ player in
+                                        HStack (alignment: .lastTextBaseline){
+                                            Text("Jugador \(player + 1)")
+                                                .font(.custom("Aniron", size: 16, relativeTo: .headline))
+                                            Spacer()
+                                            Text("200")
+                                                .font(.custom("Aniron", size: 16, relativeTo: .headline))
+                                        }
+                                    }
+                                }
+                            }
                             .padding()
+                            
+                            Button{
+                                gameState = .mainMenu
+                            } label: {
+                                Text("Volver al menú")
+                                    .buttonLabel()
+                            }
+                        }
                         Spacer()
-                        RingTimer(tickingAmount: $tickingAmount, remaining: $remaining, showEye: $showEye, showCorrect: $showCorrect)
+                    }
+                    
+                    if (gameState == .finalScore){
+                        VStack{
+                            Text("Final Score: \(score)")
+                            Button{
+                                gameState = .mainMenu
+                            } label: {
+                                Text("Volver al menú")
+                                    .buttonLabel()
+                            }
+                        }
                         Spacer()
+                    }
+                    
+                    if (gameQuestions != [] && gameState == .playing){
                         VStack{
                             Spacer()
-                            VStack(alignment: .center){
-                                Text(gameQuestions[currentRound].question)
-                                    .font(.custom("Aniron", size: 16, relativeTo: .headline))
-                                    .multilineTextAlignment(.center)
-                            }
-                            .padding()
-                            ForEach(options, id: \.self){option in
-                                Button{
-                                    areButtonsDisabled = true
-                                    Task.init(priority: .high) {
-                                        cancelTimer()
-                                        await answerQuestion(option)
-                                    }
-                                } label: {
-                                    AnswerButton(resolvedColor: resolveColor(option), option: option)
+                            RingTimer(tickingAmount: $tickingAmount, remaining: $remaining, showEye: $showEye, showCorrect: $showCorrect)
+                            Spacer()
+                            VStack{
+                                Spacer()
+                                VStack(alignment: .center){
+                                    Text(gameQuestions[currentRound].question)
+                                        .font(.custom("Aniron", size: 16, relativeTo: .headline))
+                                        .multilineTextAlignment(.center)
                                 }
-                                .disabled(areButtonsDisabled)
+                                .padding()
+                                ForEach(options, id: \.self){option in
+                                    Button{
+                                        areButtonsDisabled = true
+                                        Task.init(priority: .high) {
+                                            cancelTimer()
+                                            await answerQuestion(option)
+                                        }
+                                    } label: {
+                                        AnswerButton(resolvedColor: resolveColor(option), option: option)
+                                    }
+                                    .disabled(areButtonsDisabled)
+                                }
+                                
                             }
+                            .frame(maxHeight: .infinity)
+                            Text("Puntuación: \(score)")
+                                .font(.custom("Aniron", size: 18, relativeTo: .headline))
+                                .padding()
+                            
                         }
-                        .frame(maxHeight: .infinity)
-                        Text("Puntuación: \(score)")
-                            .font(.custom("Aniron", size: 18, relativeTo: .headline))
-                            .padding()
-                        
-                    }
-                    .padding(15)
-                    .preferredColorScheme(.dark)
-                    .onReceive(timer){ _ in
-                        
-                        if (remaining > 0 && !answered) {
-                            withAnimation(.linear(duration: 1)){
-                                tickingAmount += 12
+                        .onReceive(timer){ _ in
+                            if (remaining > 0 && !answered) {
+                                withAnimation(.linear(duration: 1)){
+                                    tickingAmount += 12
+                                }
+                                remaining -= 1
+                            } else {
+                                cancelTimer()
+                                withAnimation{
+                                    showEye = true
+                                }
+                                areButtonsDisabled = true
+                                Task.init(priority: .high) {
+                                    await answerQuestion("")
+                                }
                             }
-                            remaining -= 1
-                        } else {
-                            cancelTimer()
-                            withAnimation{
-                                showEye = true
-                            }
-                            areButtonsDisabled = true
-                            Task.init(priority: .high) {
-                                await answerQuestion("")
-                            }
+                            
                         }
-                        
+                        .frame(maxWidth: 550, maxHeight: 800)
                     }
-                    .frame(maxWidth: 550, maxHeight: 800)
                 }
+                .padding(15)
             }
         }
-        .onAppear{
-            gameQuestions = allQuestions.shuffled()[..<10]
-            options = gameQuestions[currentRound].options.shuffled()
-            instantiateTimer()
-        }
+        .preferredColorScheme(.dark)
         
     }
     
@@ -128,15 +194,18 @@ struct ContentView: View {
         showCorrect = false
         withAnimation{
             showEye = false
-           
         }
     }
     
-    func resetGame(){
-        gameQuestions = allQuestions.shuffled()[..<10]
+    func initGame(){
         currentRound = 0
         score = 0
-        nextRound()
+        showCorrect = false
+        showEye = false
+        gameQuestions = allQuestions.shuffled()[..<10]
+        options = gameQuestions[currentRound].options.shuffled()
+        instantiateTimer()
+        gameState = .playing
     }
     
     func answerQuestion(_ option: String) async {
@@ -157,10 +226,8 @@ struct ContentView: View {
         if(currentRound < 9){
             nextRound()
         } else {
-            resetGame()
+            gameState = .finalScore
         }
-       
-        
     }
     
     
