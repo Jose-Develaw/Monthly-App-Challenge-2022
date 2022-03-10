@@ -72,11 +72,13 @@ struct ContentView: View {
                     }
                     if (gameState == .topScores){
                         VStack{
+                            Text("Listado de puntuaciones")
+                                .font(.custom("Aniron", size: 18, relativeTo: .headline))
                             ScrollView{
                                 LazyVStack{
                                     ForEach(0..<10){ player in
                                         HStack (alignment: .lastTextBaseline){
-                                            Text("Jugador \(player + 1)")
+                                            Text("\(player + 1).Jugador \(player + 1)")
                                                 .font(.custom("Aniron", size: 16, relativeTo: .headline))
                                             Spacer()
                                             Text("200")
