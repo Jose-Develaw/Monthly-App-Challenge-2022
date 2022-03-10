@@ -16,6 +16,7 @@ struct ContentView: View {
     @State private var answered = false
     @State private var selectedOption = ""
     @State private var options = [String]()
+    @State private var areButtonsDisabled = false
         
     @State private var tickingAmount = 0.0
     @State private var remaining = 30
@@ -52,6 +53,7 @@ struct ContentView: View {
                             .padding()
                             ForEach(options, id: \.self){option in
                                 Button{
+                                    areButtonsDisabled = true
                                     Task.init(priority: .high) {
                                         cancelTimer()
                                         await answerQuestion(option)
@@ -59,6 +61,7 @@ struct ContentView: View {
                                 } label: {
                                     AnswerButton(resolvedColor: resolveColor(option), option: option)
                                 }
+                                .disabled(areButtonsDisabled)
                             }
                         }
                         .frame(maxHeight: .infinity)
@@ -79,6 +82,7 @@ struct ContentView: View {
                             remaining -= 1
                         } else {
                             cancelTimer()
+                            areButtonsDisabled = true
                             Task.init(priority: .high) {
                                 await answerQuestion("")
                             }
@@ -108,6 +112,24 @@ struct ContentView: View {
         return
     }
     
+    func nextRound(){
+        remaining = 30
+        currentRound += 1
+        selectedOption = ""
+        answered = false
+        options = gameQuestions[currentRound].options.shuffled()
+        tickingAmount = 0.0
+        instantiateTimer()
+        areButtonsDisabled = false
+    }
+    
+    func resetGame(){
+        gameQuestions = allQuestions.shuffled()[..<10]
+        currentRound = 0
+        score = 0
+        nextRound()
+    }
+    
     func answerQuestion(_ option: String) async {
         withAnimation{
             selectedOption = option
@@ -117,13 +139,12 @@ struct ContentView: View {
             }
         }
         try? await Task.sleep(nanoseconds: 2_000_000_000)
-        remaining = 30
-        currentRound += 1
-        selectedOption = ""
-        answered = false
-        options = gameQuestions[currentRound].options
-        tickingAmount = 0.0
-        instantiateTimer()
+        if(currentRound < 9){
+            nextRound()
+        } else {
+            resetGame()
+        }
+       
         
     }
     
