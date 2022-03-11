@@ -239,6 +239,10 @@ struct ContentView: View {
     }
     
     func initGame(){
+        answered = false
+        areButtonsDisabled = false
+        tickingAmount = 0.0
+        remaining = 30
         currentRound = 0
         score = 0
         showCorrect = false
