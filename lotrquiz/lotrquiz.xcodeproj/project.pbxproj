@@ -20,6 +20,8 @@
 		C480B62927D97168007F4EAE /* RingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C480B62827D97168007F4EAE /* RingTimer.swift */; };
 		C480B62B27D97265007F4EAE /* Arc.swift in Sources */ = {isa = PBXBuildFile; fileRef = C480B62A27D97265007F4EAE /* Arc.swift */; };
 		C480B62D27D97345007F4EAE /* AnswerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C480B62C27D97345007F4EAE /* AnswerButton.swift */; };
+		C4B992C127DBF34500DCF836 /* ScoresManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B992C027DBF34500DCF836 /* ScoresManager.swift */; };
+		C4B992C327DBF4DB00DCF836 /* TopScores.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B992C227DBF4DB00DCF836 /* TopScores.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +40,8 @@
 		C480B62827D97168007F4EAE /* RingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingTimer.swift; sourceTree = "<group>"; };
 		C480B62A27D97265007F4EAE /* Arc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arc.swift; sourceTree = "<group>"; };
 		C480B62C27D97345007F4EAE /* AnswerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnswerButton.swift; sourceTree = "<group>"; };
+		C4B992C027DBF34500DCF836 /* ScoresManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoresManager.swift; sourceTree = "<group>"; };
+		C4B992C227DBF4DB00DCF836 /* TopScores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopScores.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +88,8 @@
 				C480B62A27D97265007F4EAE /* Arc.swift */,
 				C480B62C27D97345007F4EAE /* AnswerButton.swift */,
 				C440DAF327DAA88F00AD9AA7 /* UIExtensions.swift */,
+				C4B992C027DBF34500DCF836 /* ScoresManager.swift */,
+				C4B992C227DBF4DB00DCF836 /* TopScores.swift */,
 			);
 			path = lotrquiz;
 			sourceTree = "<group>";
@@ -170,8 +176,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				C46165A527D27C8A00D21782 /* ContentView.swift in Sources */,
+				C4B992C127DBF34500DCF836 /* ScoresManager.swift in Sources */,
 				C46165B527D285B100D21782 /* Question.swift in Sources */,
 				C480B62B27D97265007F4EAE /* Arc.swift in Sources */,
+				C4B992C327DBF4DB00DCF836 /* TopScores.swift in Sources */,
 				C440DAF427DAA88F00AD9AA7 /* UIExtensions.swift in Sources */,
 				C480B62927D97168007F4EAE /* RingTimer.swift in Sources */,
 				C480B62D27D97345007F4EAE /* AnswerButton.swift in Sources */,

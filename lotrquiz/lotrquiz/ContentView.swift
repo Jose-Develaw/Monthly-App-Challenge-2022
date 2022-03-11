@@ -15,6 +15,8 @@ enum GameState {
 struct ContentView: View {
     var allQuestions : [Question] = Bundle.main.decode("questions.json")
     
+    @State private var topScores : TopScores = ScoreManager.getTopScores()
+    
     @State private var gameState : GameState = .mainMenu
     @State private var gameQuestions = ArraySlice<Question>()
     @State private var currentRound = 0
@@ -33,6 +35,8 @@ struct ContentView: View {
     //Timer
     @State var timer: Timer.TimerPublisher = Timer.publish(every: 1, on: .main, in: .common)
     @State var connectedTimer: Cancellable? = nil
+    
+    @State private var userName = ""
     
     var body: some View {
         VStack{
@@ -53,22 +57,25 @@ struct ContentView: View {
                     if (gameState == .mainMenu){
                         VStack{
                             Button{
-                               initGame()
+                                withAnimation{
+                                   initGame()
+                                }
                             } label: {
                                 Text("Iniciar partida")
                                     .buttonLabel()
                             }
                             Button{
-                                gameState = .topScores
+                                withAnimation{
+                                    gameState = .topScores
+                                }
                             } label: {
                                 Text("Ver puntuaciones")
                                     .buttonLabel()
                             }
                         }
+                        .transition(.asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .leading)))
                         Spacer()
-                        Text("© José Ibáñez (Develaw) 2022")
-                            .foregroundColor(.white)
-                            .font(.footnote)
+                       
                     }
                     if (gameState == .topScores){
                         VStack{
@@ -76,12 +83,12 @@ struct ContentView: View {
                                 .font(.custom("Aniron", size: 18, relativeTo: .headline))
                             ScrollView{
                                 LazyVStack{
-                                    ForEach(0..<10){ player in
+                                    ForEach(topScores.sortedScores, id: \.self) { score in
                                         HStack (alignment: .lastTextBaseline){
-                                            Text("\(player + 1).Jugador \(player + 1)")
+                                            Text(score.userName)
                                                 .font(.custom("Aniron", size: 16, relativeTo: .headline))
                                             Spacer()
-                                            Text("200")
+                                            Text(score.score, format: .number)
                                                 .font(.custom("Aniron", size: 16, relativeTo: .headline))
                                         }
                                     }
@@ -90,25 +97,55 @@ struct ContentView: View {
                             .padding()
                             
                             Button{
-                                gameState = .mainMenu
+                                withAnimation{
+                                    gameState = .mainMenu
+                                }
                             } label: {
                                 Text("Volver al menú")
                                     .buttonLabel()
                             }
                         }
+                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
                         Spacer()
                     }
                     
                     if (gameState == .finalScore){
                         VStack{
-                            Text("Final Score: \(score)")
+                            Spacer()
+                            Text("Puntuación final: \(score)")
+                                .font(.custom("Aniron", size: 18, relativeTo: .headline))
+                            TextField("Escribe tu nombre", text: $userName)
+                                .multilineTextAlignment(.center)
+                                .accentColor(Color(red: 168/255, green: 147/255, blue: 36/255, opacity: 0.6))
+                                .padding(.horizontal)
+                                .buttonLabel()
+                            Spacer()
                             Button{
-                                gameState = .mainMenu
+                                let newScore = Score(userName: userName, score: score)
+                                topScores.scores.append(newScore)
+                                ScoreManager.saveTopScores(topScores)
+                                withAnimation{
+                                    gameState = .mainMenu
+                                }
                             } label: {
-                                Text("Volver al menú")
+                                Text("Guardar puntuación")
+                                    .foregroundColor(userName.count <= 0 ? .gray : .white)
+                                    .buttonLabel()
+                                    
+                            }
+                            .disabled(userName.count <= 0)
+                            
+                            Button{
+                                withAnimation{
+                                    gameState = .mainMenu
+                                }
+                            } label: {
+                                Text("Salir sin guardar")
                                     .buttonLabel()
                             }
+                            Spacer()
                         }
+                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
                         Spacer()
                     }
                     
@@ -163,10 +200,12 @@ struct ContentView: View {
                             }
                             
                         }
-                        .frame(maxWidth: 550, maxHeight: 800)
+                        
+                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
                     }
                 }
                 .padding(15)
+                .frame(maxWidth: 550, maxHeight: 800)
             }
         }
         .preferredColorScheme(.dark)
