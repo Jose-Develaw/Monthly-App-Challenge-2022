@@ -13,11 +13,13 @@ enum GameState {
 }
 
 struct ContentView: View {
-    var allQuestions : [Question] = Bundle.main.decode("questions.json")
     
+    var allQuestions : [Question] = Bundle.main.decode("questions.json")
+    @State private var gameState : GameState = .mainMenu
+    @StateObject var gameStatus = GameStatus()
     @State private var topScores : TopScores = ScoreManager.getTopScores()
     
-    @State private var gameState : GameState = .mainMenu
+    
     @State private var gameQuestions = ArraySlice<Question>()
     @State private var currentRound = 0
     @State private var score = 0
@@ -55,155 +57,18 @@ struct ContentView: View {
                         .padding()
                     Spacer()
                     if (gameState == .mainMenu){
-                        VStack{
-                            Button{
-                                withAnimation{
-                                   initGame()
-                                }
-                            } label: {
-                                Text("Iniciar partida")
-                                    .buttonLabel()
-                            }
-                            Button{
-                                withAnimation{
-                                    gameState = .topScores
-                                }
-                            } label: {
-                                Text("Ver puntuaciones")
-                                    .buttonLabel()
-                            }
-                        }
-                        .transition(.asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .leading)))
-                        Spacer()
-                       
+                        MainMenuView(gameStatus: gameStatus, gameState: $gameState, instantiateTimer: instantiateTimer)
                     }
                     if (gameState == .topScores){
-                        VStack{
-                            Text("Listado de puntuaciones")
-                                .font(.custom("Aniron", size: 18, relativeTo: .headline))
-                            ScrollView{
-                                LazyVStack{
-                                    ForEach(topScores.sortedScores, id: \.self) { score in
-                                        HStack (alignment: .lastTextBaseline){
-                                            Text(score.userName)
-                                                .font(.custom("Aniron", size: 16, relativeTo: .headline))
-                                            Spacer()
-                                            Text(score.score, format: .number)
-                                                .font(.custom("Aniron", size: 16, relativeTo: .headline))
-                                        }
-                                    }
-                                }
-                            }
-                            .padding()
-                            
-                            Button{
-                                withAnimation{
-                                    gameState = .mainMenu
-                                }
-                            } label: {
-                                Text("Volver al menú")
-                                    .buttonLabel()
-                            }
-                        }
-                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
-                        Spacer()
+                        TopScoresView(topScores: $topScores, gameState: $gameState)
                     }
-                    
                     if (gameState == .finalScore){
-                        VStack{
-                            Spacer()
-                            Text("Puntuación final: \(score)")
-                                .font(.custom("Aniron", size: 18, relativeTo: .headline))
-                            TextField("Escribe tu nombre", text: $userName)
-                                .multilineTextAlignment(.center)
-                                .accentColor(Color(red: 168/255, green: 147/255, blue: 36/255, opacity: 0.6))
-                                .padding(.horizontal)
-                                .buttonLabel()
-                            Spacer()
-                            Button{
-                                let newScore = Score(userName: userName, score: score)
-                                topScores.scores.append(newScore)
-                                ScoreManager.saveTopScores(topScores)
-                                withAnimation{
-                                    gameState = .mainMenu
-                                }
-                            } label: {
-                                Text("Guardar puntuación")
-                                    .foregroundColor(userName.count <= 0 ? .gray : .white)
-                                    .buttonLabel()
-                                    
-                            }
-                            .disabled(userName.count <= 0)
-                            
-                            Button{
-                                withAnimation{
-                                    gameState = .mainMenu
-                                }
-                            } label: {
-                                Text("Salir sin guardar")
-                                    .buttonLabel()
-                            }
-                            Spacer()
-                        }
-                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
-                        Spacer()
+                        FinalScoreView(gameStatus: gameStatus, topScores: $topScores, gameState: $gameState)
                     }
-                    
-                    if (gameQuestions != [] && gameState == .playing){
-                        VStack{
-                            Spacer()
-                            RingTimer(tickingAmount: $tickingAmount, remaining: $remaining, showEye: $showEye, showCorrect: $showCorrect)
-                            Spacer()
-                            VStack{
-                                Spacer()
-                                VStack(alignment: .center){
-                                    Text(gameQuestions[currentRound].question)
-                                        .font(.custom("Aniron", size: 16, relativeTo: .headline))
-                                        .multilineTextAlignment(.center)
-                                }
-                                .padding()
-                                ForEach(options, id: \.self){option in
-                                    Button{
-                                        areButtonsDisabled = true
-                                        Task.init(priority: .high) {
-                                            cancelTimer()
-                                            await answerQuestion(option)
-                                        }
-                                    } label: {
-                                        AnswerButton(resolvedColor: resolveColor(option), option: option)
-                                    }
-                                    .disabled(areButtonsDisabled)
-                                }
-                                
-                            }
-                            .frame(maxHeight: .infinity)
-                            Text("Puntuación: \(score)")
-                                .font(.custom("Aniron", size: 18, relativeTo: .headline))
-                                .padding()
-                            
-                        }
-                        .onReceive(timer){ _ in
-                            if (remaining > 0 && !answered) {
-                                withAnimation(.linear(duration: 1)){
-                                    tickingAmount += 12
-                                }
-                                remaining -= 1
-                            } else {
-                                cancelTimer()
-                                withAnimation{
-                                    showEye = true
-                                }
-                                areButtonsDisabled = true
-                                Task.init(priority: .high) {
-                                    await answerQuestion("")
-                                }
-                            }
-                            
-                        }
-                        
-                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
+                    if (gameStatus.gameQuestions != [] && gameState == .playing){
+                        PlayingView(gameStatus: gameStatus, timer: $timer, cancelTimer: cancelTimer, instantiateTimer: instantiateTimer, gameState: $gameState)
                     }
-                }
+                }                
                 .padding(15)
                 .frame(maxWidth: 550, maxHeight: 800)
             }
