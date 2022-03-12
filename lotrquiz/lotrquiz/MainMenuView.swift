@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MainMenuView: View {
     var allQuestions : [Question] = Bundle.main.decode("questions.json")
-    @ObservedObject var gameStatus : GameStatus
+    @Binding var gameStatus : GameStatus
     @Binding var gameState : GameState
     var instantiateTimer: () -> Void
     

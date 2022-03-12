@@ -10,7 +10,7 @@ import Combine
 
 struct PlayingView: View {
     
-    @ObservedObject var gameStatus : GameStatus
+    @Binding var gameStatus : GameStatus
     @Binding var timer : Timer.TimerPublisher
     var cancelTimer : () -> Void
     var instantiateTimer : () -> Void
@@ -37,7 +37,7 @@ struct PlayingView: View {
                             await answerQuestion(option)
                         }
                     } label: {
-                        AnswerButton(resolvedColor: resolveColor(option), option: option)
+                        AnswerButton(resolvedColor: resolveButtonColor(option), option: option)
                     }
                     .disabled(gameStatus.areButtonsDisabled)
                 }
@@ -86,8 +86,6 @@ struct PlayingView: View {
     }
     
     
-    
-    
     func answerQuestion(_ option: String) async {
         withAnimation{
             gameStatus.selectedOption = option
@@ -113,7 +111,7 @@ struct PlayingView: View {
     
     
     
-    func resolveColor(_ option: String) -> Color {
+    func resolveButtonColor(_ option: String) -> Color {
         if(!gameStatus.answered){
             return Color(red: 168/255, green: 147/255, blue: 36/255, opacity: 0.6)
         }

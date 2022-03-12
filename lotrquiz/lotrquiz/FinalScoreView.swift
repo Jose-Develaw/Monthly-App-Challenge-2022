@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FinalScoreView: View {
     
-    @ObservedObject var gameStatus : GameStatus
+    @Binding var gameStatus : GameStatus
     @Binding var topScores : TopScores
     @State private var userName = ""
     @Binding var gameState : GameState

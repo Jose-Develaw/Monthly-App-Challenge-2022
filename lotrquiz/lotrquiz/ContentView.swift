@@ -16,29 +16,12 @@ struct ContentView: View {
     
     var allQuestions : [Question] = Bundle.main.decode("questions.json")
     @State private var gameState : GameState = .mainMenu
-    @StateObject var gameStatus = GameStatus()
+    @State var gameStatus = GameStatus()
     @State private var topScores : TopScores = ScoreManager.getTopScores()
-    
-    
-    @State private var gameQuestions = ArraySlice<Question>()
-    @State private var currentRound = 0
-    @State private var score = 0
-    @State private var answered = false
-    @State private var selectedOption = ""
-    @State private var options = [String]()
-    @State private var areButtonsDisabled = false
-    
-    //Timer and Score Graphics
-    @State private var tickingAmount = 0.0
-    @State private var remaining = 30
-    @State private var showEye = false
-    @State private var showCorrect = false
     
     //Timer
     @State var timer: Timer.TimerPublisher = Timer.publish(every: 1, on: .main, in: .common)
     @State var connectedTimer: Cancellable? = nil
-    
-    @State private var userName = ""
     
     var body: some View {
         VStack{
@@ -57,16 +40,16 @@ struct ContentView: View {
                         .padding()
                     Spacer()
                     if (gameState == .mainMenu){
-                        MainMenuView(gameStatus: gameStatus, gameState: $gameState, instantiateTimer: instantiateTimer)
+                        MainMenuView(gameStatus: $gameStatus, gameState: $gameState, instantiateTimer: instantiateTimer)
                     }
                     if (gameState == .topScores){
                         TopScoresView(topScores: $topScores, gameState: $gameState)
                     }
                     if (gameState == .finalScore){
-                        FinalScoreView(gameStatus: gameStatus, topScores: $topScores, gameState: $gameState)
+                        FinalScoreView(gameStatus: $gameStatus, topScores: $topScores, gameState: $gameState)
                     }
                     if (gameStatus.gameQuestions != [] && gameState == .playing){
-                        PlayingView(gameStatus: gameStatus, timer: $timer, cancelTimer: cancelTimer, instantiateTimer: instantiateTimer, gameState: $gameState)
+                        PlayingView(gameStatus: $gameStatus, timer: $timer, cancelTimer: cancelTimer, instantiateTimer: instantiateTimer, gameState: $gameState)
                     }
                 }                
                 .padding(15)
@@ -86,72 +69,6 @@ struct ContentView: View {
     func cancelTimer() {
         self.connectedTimer?.cancel()
         return
-    }
-    
-    func nextRound(){
-        remaining = 30
-        currentRound += 1
-        selectedOption = ""
-        answered = false
-        options = gameQuestions[currentRound].options.shuffled()
-        tickingAmount = 0.0
-        instantiateTimer()
-        areButtonsDisabled = false
-        showCorrect = false
-        withAnimation{
-            showEye = false
-        }
-    }
-    
-    func initGame(){
-        answered = false
-        areButtonsDisabled = false
-        tickingAmount = 0.0
-        remaining = 30
-        currentRound = 0
-        score = 0
-        showCorrect = false
-        showEye = false
-        gameQuestions = allQuestions.shuffled()[..<10]
-        options = gameQuestions[currentRound].options.shuffled()
-        instantiateTimer()
-        gameState = .playing
-    }
-    
-    func answerQuestion(_ option: String) async {
-        withAnimation{
-            selectedOption = option
-            answered = true
-        }
-        if(option == gameQuestions[currentRound].correctAnswer){
-                showCorrect = true
-                score += remaining
-        } else {
-            withAnimation{
-                showEye = true
-            }
-        }
-        
-        try? await Task.sleep(nanoseconds: 2_000_000_000)
-        if(currentRound < 9){
-            nextRound()
-        } else {
-            gameState = .finalScore
-        }
-    }
-    
-    
-    
-    func resolveColor(_ option: String) -> Color {
-        if(!answered){
-            return Color(red: 168/255, green: 147/255, blue: 36/255, opacity: 0.6)
-        }
-        if(option == gameQuestions[currentRound].correctAnswer){
-            return .green
-        } else if (option != gameQuestions[currentRound].correctAnswer && option == selectedOption){
-            return .red
-        }
-        return Color(red: 168/255, green: 147/255, blue: 36/255, opacity: 0.6)
     }
         
 }
