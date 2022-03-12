@@ -24,7 +24,7 @@ struct FinalScoreView: View {
                     .multilineTextAlignment(.center)
                     .accentColor(Color(red: 168/255, green: 147/255, blue: 36/255, opacity: 0.6))
                     .padding(.horizontal)
-                    .buttonLabel()
+                    .goldenFramed()
                 Spacer()
                 Button{
                     let newScore = Score(userName: userName, score: gameStatus.score)
@@ -36,7 +36,7 @@ struct FinalScoreView: View {
                 } label: {
                     Text("Guardar puntuación")
                         .foregroundColor(userName.count <= 0 ? .gray : .white)
-                        .buttonLabel()
+                        .goldenFramed()
                         
                 }
                 .disabled(userName.count <= 0)
@@ -47,7 +47,7 @@ struct FinalScoreView: View {
                     }
                 } label: {
                     Text("Salir sin guardar")
-                        .buttonLabel()
+                        .goldenFramed()
                 }
                 Spacer()
             }

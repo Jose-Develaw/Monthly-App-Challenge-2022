@@ -28,7 +28,7 @@ struct TopScoresView: View {
                         }
                     }
                 }
-                .padding()
+                .padding([.horizontal, .bottom], 35)
                 
                 Button{
                     withAnimation{
@@ -36,12 +36,12 @@ struct TopScoresView: View {
                     }
                 } label: {
                     Text("Volver al menú")
-                        .buttonLabel()
+                        .goldenFramed()
                 }
             }
-            .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
             Spacer()
         }
+        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
     }
 }
 

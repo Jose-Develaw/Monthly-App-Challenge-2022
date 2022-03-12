@@ -23,7 +23,7 @@ struct MainMenuView: View {
                     }
                 } label: {
                     Text("Iniciar partida")
-                        .buttonLabel()
+                        .goldenFramed()
                 }
                 Button{
                     withAnimation{
@@ -31,12 +31,12 @@ struct MainMenuView: View {
                     }
                 } label: {
                     Text("Ver puntuaciones")
-                        .buttonLabel()
+                        .goldenFramed()
                 }
             }
-            .transition(.asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .leading)))
             Spacer()
         }
+        .transition(.asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .leading)))
     }
     
     func initGame(){

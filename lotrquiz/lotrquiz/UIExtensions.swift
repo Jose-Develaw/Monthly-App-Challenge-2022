@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
- struct ButtonStyleModifier : ViewModifier {
+ struct GoldenFramed : ViewModifier {
     func body(content: Content) -> some View {
         content
             .frame(maxWidth: .infinity, maxHeight: 50)
@@ -24,8 +24,8 @@ import SwiftUI
 }
 
 extension View {
-    func buttonLabel() -> some View {
-        modifier(ButtonStyleModifier())
+    func goldenFramed() -> some View {
+        modifier(GoldenFramed())
     }
 }
 
