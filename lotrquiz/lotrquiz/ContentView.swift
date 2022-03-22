@@ -28,12 +28,13 @@ struct ContentView: View {
             ZStack{
                 Image("background")
                     .resizable()
-                    .scaledToFill()
+                    .ignoresSafeArea(.keyboard)
                     .ignoresSafeArea()
                 Color(.black)
                     .opacity(0.75)
                     .ignoresSafeArea()
                 VStack{
+                    Spacer()
                     Text("THE LORD OF THE QUIZ")
                         .font(.custom("Aniron", size: 26, relativeTo: .title))
                         .multilineTextAlignment(.center)
@@ -47,17 +48,20 @@ struct ContentView: View {
                     }
                     if (gameState == .finalScore){
                         FinalScoreView(gameStatus: $gameStatus, topScores: $topScores, gameState: $gameState)
+                            
                     }
                     if (gameStatus.gameQuestions != [] && gameState == .playing){
                         PlayingView(gameStatus: $gameStatus, timer: $timer, cancelTimer: cancelTimer, instantiateTimer: instantiateTimer, gameState: $gameState)
                     }
-                }                
+                }
                 .padding(15)
                 .frame(maxWidth: 550, maxHeight: 800)
+                
             }
+            .ignoresSafeArea(.keyboard)
         }
         .preferredColorScheme(.dark)
-        
+            
     }
     
     func instantiateTimer() {

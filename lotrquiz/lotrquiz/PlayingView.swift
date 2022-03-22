@@ -25,7 +25,8 @@ struct PlayingView: View {
                 Spacer()
                 VStack(alignment: .center){
                     Text(gameStatus.gameQuestions[gameStatus.currentRound].question)
-                        .font(.custom("Aniron", size: 16, relativeTo: .headline))
+                        .font(.custom("Aniron", size: 16, relativeTo: .caption))
+                        .minimumScaleFactor(0.5)
                         .multilineTextAlignment(.center)
                 }
                 .padding()
